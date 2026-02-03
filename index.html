@@ -358,26 +358,53 @@
         let currentMode = 'date';
         let chartInstance = null; // For Chart.js instance
 
-        // --- Data: Trigrams & Hexagrams ---
+        // --- Data: Trigrams (Based on Lines: [Bottom, Middle, Top]) ---
+        // 1=Yang, 0=Yin
         const trigrams = {
-            1: { name: '乾', lines: [1,1,1] }, 2: { name: '兌', lines: [0,1,1] },
-            3: { name: '離', lines: [1,0,1] }, 4: { name: '震', lines: [0,0,1] },
-            5: { name: '巽', lines: [1,1,0] }, 6: { name: '坎', lines: [0,1,0] },
-            7: { name: '艮', lines: [1,0,0] }, 8: { name: '坤', lines: [0,0,0] }
+            1: { name: '乾', lines: [1,1,1] }, // Heaven
+            2: { name: '兌', lines: [1,1,0] }, // Lake (Top broken)
+            3: { name: '離', lines: [1,0,1] }, // Fire
+            4: { name: '震', lines: [1,0,0] }, // Thunder (Bottom solid)
+            5: { name: '巽', lines: [0,1,1] }, // Wind (Bottom broken)
+            6: { name: '坎', lines: [0,1,0] }, // Water
+            7: { name: '艮', lines: [0,0,1] }, // Mountain (Top solid)
+            8: { name: '坤', lines: [0,0,0] }  // Earth
         };
 
+        // --- Data: Hexagrams (Mapped EXACTLY from provided image) ---
+        // Format: "Upper,Lower"
         const hexagramNames = {
-            "1,1": "乾為天", "8,8": "坤為地", "6,4": "水雷屯", "7,6": "山水蒙", "6,1": "水天需", "1,6": "天水訟",
-            "8,6": "地水師", "6,8": "水地比", "5,1": "風天小畜", "1,2": "天澤履", "8,1": "地天泰", "1,8": "天地否",
-            "1,3": "天火同人", "3,1": "火天大有", "8,7": "地山謙", "4,8": "雷地豫", "2,4": "澤雷隨", "7,5": "山風蠱",
-            "8,2": "地澤臨", "5,8": "風地觀", "3,4": "火雷噬嗑", "7,3": "山火賁", "7,8": "山地剝", "8,4": "地雷復",
-            "1,4": "天雷無妄", "7,1": "山天大畜", "7,4": "山雷頤", "2,5": "澤風大過", "6,6": "坎為水", "3,3": "離為火",
-            "2,7": "澤山咸", "4,5": "雷風恆", "1,7": "天山遯", "4,1": "雷天大壯", "3,8": "火地晉", "8,3": "地火明夷",
-            "5,3": "風火家人", "3,2": "火澤睽", "6,7": "水山蹇", "4,6": "雷水解", "7,2": "山澤損", "5,4": "風雷益",
-            "2,1": "澤天夬", "1,5": "天風姤", "2,8": "澤地萃", "8,5": "地風升", "2,6": "澤水困", "6,5": "水風井",
-            "2,3": "澤火革", "3,5": "火風鼎", "4,4": "震為雷", "7,7": "艮為山", "5,7": "風山漸", "4,2": "雷澤歸妹",
-            "4,3": "雷火豐", "3,7": "火山旅", "5,5": "巽為風", "2,2": "兌為澤", "5,6": "風水渙", "6,2": "水澤節",
-            "5,2": "風澤中孚", "4,7": "雷山小過", "6,3": "水火既濟", "3,6": "火水未濟"
+            // Col 8 (Lower 坤 Earth)
+            "8,8": "坤為地", "8,7": "地山謙", "8,6": "地水師", "8,5": "地風升",
+            "8,4": "地雷復", "8,3": "地火明夷", "8,2": "地澤臨", "8,1": "地天泰",
+            
+            // Col 7 (Lower 艮 Mountain)
+            "7,8": "山地剝", "7,7": "艮為山", "7,6": "山水蒙", "7,5": "山風蠱",
+            "7,4": "山雷頤", "7,3": "山火賁", "7,2": "山澤損", "7,1": "山天大畜",
+            
+            // Col 6 (Lower 坎 Water)
+            "6,8": "水地比", "6,7": "水山蹇", "6,6": "坎為水", "6,5": "水風井",
+            "6,4": "水雷屯", "6,3": "水火既濟", "6,2": "水澤節", "6,1": "水天需",
+            
+            // Col 5 (Lower 巽 Wind)
+            "5,8": "風地觀", "5,7": "風山漸", "5,6": "風水渙", "5,5": "巽為風",
+            "5,4": "風雷益", "5,3": "風火家人", "5,2": "風澤中孚", "5,1": "風天小畜",
+            
+            // Col 4 (Lower 震 Thunder)
+            "4,8": "雷地豫", "4,7": "雷山小過", "4,6": "雷水解", "4,5": "雷風恆",
+            "4,4": "震為雷", "4,3": "雷火豐", "4,2": "雷澤歸妹", "4,1": "雷天大壯",
+            
+            // Col 3 (Lower 離 Fire)
+            "3,8": "火地晉", "3,7": "火山旅", "3,6": "火水未濟", "3,5": "火風鼎",
+            "3,4": "火雷噬嗑", "3,3": "離為火", "3,2": "火澤睽", "3,1": "火天大有",
+            
+            // Col 2 (Lower 兌 Lake)
+            "2,8": "澤地萃", "2,7": "澤山咸", "2,6": "澤水困", "2,5": "澤風大過",
+            "2,4": "澤雷隨", "2,3": "澤火革", "2,2": "兌為澤", "2,1": "澤天夬",
+            
+            // Col 1 (Lower 乾 Heaven)
+            "1,8": "天地否", "1,7": "天山遯", "1,6": "天水訟", "1,5": "天風姤",
+            "1,4": "天雷無妄", "1,3": "天火同人", "1,2": "天澤履", "1,1": "乾為天"
         };
 
         const fortuneBank = {
@@ -508,12 +535,21 @@
             document.getElementById('resLuck').innerText = fortune.advice;
 
             // Visual Hexagram Render
+            // Array indices: [0=Bottom, 1=Middle, 2=Top]
+            // Rendering Stack (Visual): Top -> Middle -> Bottom
             const upLines = trigrams[upper].lines; 
             const lowLines = trigrams[lower].lines;
             let html = '';
+            
+            // Render Upper Trigram (Top line first)
             for(let i=2; i>=0; i--) html += `<div class="hex-line ${upLines[i] ? '' : 'yin'}"></div>`;
+            
+            // Spacer
             html += `<div class="h-2"></div>`;
+            
+            // Render Lower Trigram (Top line first)
             for(let i=2; i>=0; i--) html += `<div class="hex-line ${lowLines[i] ? '' : 'yin'}"></div>`;
+            
             document.getElementById('hexagramVisual').innerHTML = html;
 
             // Chart.js Visualization
