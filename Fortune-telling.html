@@ -3,28 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>降叁 | 易經靈數占卜</title>
+    <title>降叁吉卜 | 易經靈數占卜</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
+    <!-- Chart.js (必要圖表庫) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Noto Serif TC (內文) + Zhi Mang Xing (書法標題) -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
     
+    <!-- Meta Tags -->
+    <meta name="description" content="降叁吉卜 - 結合現代網頁設計與傳統易經智慧的占卜應用。提供每日運勢解析與隨機卜卦功能。">
+    <meta property="og:title" content="降叁吉卜 | 易經靈數占卜">
+    <meta property="og:description" content="靜心誠意，探索每日運勢與人生指引。">
+    <meta property="og:type" content="website">
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         zen: {
-                            bg: '#F5F5F0',      // 米色宣紙底
-                            ink: '#2C2C2C',     // 水墨黑
-                            milktea: '#9E8166', // 奶茶色 (主色)
-                            paper: '#FFFFFF',   // 純白卡片
-                            brown: '#8D7B68',   // 枯茶色
-                            sand: '#C5A880',    // 沙金
-                            clay: '#A9907E',    // 陶土
-                            border: '#E6E2D3'   // 邊框色
+                            bg: '#F5F5F0',
+                            ink: '#2C2C2C',
+                            milktea: '#9E8166',
+                            brown: '#8D7B68',
+                            light: '#FFFFFF',
+                            accent: '#C5A880'
                         }
                     },
                     fontFamily: {
@@ -34,21 +40,21 @@
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.8s ease-out',
-                        'float': 'float 4s ease-in-out infinite',
                         'ink-spread': 'inkSpread 1.5s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
                     },
                     keyframes: {
                         fadeIn: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
                             '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        inkSpread: {
+                            '0%': { opacity: '0', transform: 'scale(0.95)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' }
                         },
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-8px)' },
-                        },
-                        inkSpread: {
-                            '0%': { opacity: '0', transform: 'scale(0.95) translateY(5px)' },
-                            '100%': { opacity: '1', transform: 'scale(1) translateY(0)' }
+                            '50%': { transform: 'translateY(-10px)' },
                         }
                     }
                 }
@@ -60,55 +66,59 @@
         body {
             background-color: #F5F5F0;
             background-image: url("https://www.transparenttextures.com/patterns/rice-paper-2.png");
-            /* 備用紋理 */
             color: #2C2C2C;
+            overflow-x: hidden;
         }
         
-        /* Zen Card Style - Light & Clean */
         .zen-panel {
-            background: rgba(255, 255, 255, 0.65);
+            background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(141, 123, 104, 0.15);
-            box-shadow: 0 10px 40px -10px rgba(141, 123, 104, 0.15);
+            border: 1px solid rgba(141, 123, 104, 0.2);
+            box-shadow: 0 10px 30px -5px rgba(141, 123, 104, 0.15);
         }
 
-        .ink-text {
-            color: #2C2C2C;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.05);
-        }
-        
-        /* Calligraphy Title Effect */
         .calligraphy-title {
             font-family: 'Zhi Mang Xing', cursive;
             color: #9E8166; 
             text-shadow: 2px 4px 6px rgba(141, 123, 104, 0.25);
         }
 
-        /* Custom Hexagram lines - Dark Ink Style */
+        /* Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+
         .hex-line {
-            width: 70px;
-            height: 10px;
+            width: 80px;
+            height: 12px;
             margin: 6px auto;
-            background: #2C2C2C; /* 實心墨色 */
+            background: #2C2C2C;
             border-radius: 2px;
             opacity: 0.9;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
         .hex-line.yin {
             background: transparent;
             display: flex;
             justify-content: space-between;
+            box-shadow: none;
         }
         .hex-line.yin::before, .hex-line.yin::after {
             content: '';
-            width: 30px;
+            width: 35px;
             height: 100%;
             background: #2C2C2C;
             border-radius: 2px;
             display: block;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
-        /* Decorative red seal (Chop) */
         .seal {
             border: 2px solid #8B0000;
             color: #8B0000;
@@ -118,53 +128,39 @@
             padding: 4px 6px;
             line-height: 1;
             border-radius: 4px;
-            opacity: 0.8;
+            opacity: 0.85;
             transform: rotate(-5deg);
         }
     </style>
 </head>
-<body class="font-sans min-h-screen flex flex-col items-center justify-center p-6 overflow-x-hidden selection:bg-zen-brown selection:text-white">
+<body class="font-sans min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- Decorative Background Character (Watermark) -->
-    <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[20rem] font-calligraphy text-zen-brown opacity-[0.03] pointer-events-none select-none z-0">
+    <!-- Background Watermark -->
+    <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-[15rem] md:text-[25rem] font-calligraphy text-zen-brown opacity-[0.03] pointer-events-none select-none z-0">
         易
     </div>
 
-    <!-- Header Section (Redesigned for Artistic Calligraphy) -->
-    <header class="text-center mb-10 animate-ink-spread relative z-10 w-full max-w-md mt-10">
-        <!-- Composition Container -->
-        <div class="relative h-60 w-full flex items-center justify-center">
+    <!-- Header Section -->
+    <header class="text-center mb-8 animate-ink-spread relative z-10 w-full max-w-lg mt-8">
+        <div class="relative h-48 md:h-60 w-full flex items-center justify-center">
+            <!-- Background Abstract Circle -->
+            <div class="absolute w-48 h-48 md:w-56 md:h-56 border-[12px] border-zen-milktea/10 rounded-full transform rotate-45 scale-y-90 blur-[1px]"></div>
             
-            <!-- Abstract Background Elements (Zen Enso / Ink Wash) -->
-            <div class="absolute w-56 h-56 border-[12px] border-zen-milktea/10 rounded-full transform rotate-45 scale-y-90 blur-[1px]"></div>
-            <div class="absolute w-52 h-52 border-[2px] border-zen-brown/20 rounded-full transform -rotate-12 scale-x-90"></div>
-
-            <!-- Character Group: Asymmetric "Designed" Layout -->
-            <div class="relative z-10 grid grid-cols-2 gap-x-6 gap-y-0 calligraphy-title w-full max-w-xs mx-auto">
-                <!-- 降 (Top Left - Heavy, Anchor) -->
-                <div class="text-8xl md:text-9xl text-right transform -rotate-3 translate-y-2 origin-bottom-right drop-shadow-sm text-zen-milktea z-10">
-                    降
-                </div>
-                
-                <!-- 叁 (Top Right - Lighter, Floating - Enlarged) -->
-                <div class="text-7xl md:text-8xl text-left pt-6 pl-2 text-zen-milktea transform rotate-2">
-                    叁
-                </div>
-                
-                <!-- 吉 (Bottom Left - Smaller, Connecting - Enlarged) -->
-                <div class="text-6xl md:text-7xl text-right -mt-6 pr-4 text-zen-milktea transform rotate-6">
-                    吉
-                </div>
-
-                <!-- 卜 (Bottom Right - Sharp, Final Stroke) -->
-                <div class="text-7xl md:text-8xl text-left -ml-2 -mt-2 transform -rotate-2 text-zen-milktea">
-                    卜
-                </div>
+            <!-- Asymmetric Title Layout -->
+            <div class="relative z-10 grid grid-cols-2 gap-x-2 md:gap-x-6 gap-y-0 calligraphy-title w-full max-w-xs mx-auto">
+                <!-- 降 -->
+                <div class="text-7xl md:text-9xl text-right transform -rotate-3 translate-y-2 origin-bottom-right drop-shadow-sm text-zen-milktea z-10">降</div>
+                <!-- 叁 (放大) -->
+                <div class="text-8xl md:text-[8rem] text-left pt-6 pl-2 text-zen-milktea transform rotate-2">叁</div>
+                <!-- 吉 (放大) -->
+                <div class="text-7xl md:text-[7rem] text-right -mt-6 pr-4 text-zen-milktea transform rotate-6">吉</div>
+                <!-- 卜 -->
+                <div class="text-6xl md:text-8xl text-left -ml-2 -mt-2 transform -rotate-2 text-zen-milktea">卜</div>
             </div>
 
-            <!-- Red Seal Decoration (Modern Stamp Position) -->
-            <div class="absolute bottom-6 right-8 md:right-16 transform rotate-6 z-20">
-                <div class="w-9 h-9 border border-[#8B0000] rounded-sm flex items-center justify-center bg-[#F5F5F0]/80 backdrop-blur-[1px] shadow-sm">
+            <!-- Red Seal -->
+            <div class="absolute bottom-4 right-10 md:right-16 transform rotate-6 z-20">
+                <div class="w-10 h-10 border border-[#8B0000] rounded-sm flex items-center justify-center bg-[#F5F5F0]/80 backdrop-blur-[1px] shadow-sm">
                     <span class="text-[#8B0000] font-serif font-bold text-xs writing-vertical-rl leading-none pt-1">上吉</span>
                 </div>
             </div>
@@ -174,183 +170,168 @@
         <p class="text-zen-brown font-serif tracking-[0.5em] text-[10px] uppercase opacity-90">Jiang San Divination</p>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="w-full max-w-md relative z-10 mb-12">
+    <!-- Main Application Container -->
+    <main class="w-full max-w-lg relative z-10 mb-12">
         
-        <!-- Input Form Card -->
-        <div id="inputCard" class="zen-panel rounded-2xl p-8 animate-fade-in">
-            <!-- Tabs -->
-            <div class="flex mb-8 bg-white/50 rounded-lg p-1 border border-zen-border">
+        <!-- Input Panel -->
+        <div id="inputCard" class="zen-panel rounded-2xl p-6 md:p-8 animate-fade-in transition-all duration-500">
+            
+            <!-- Tab Navigation -->
+            <div class="flex mb-8 bg-white/60 rounded-lg p-1.5 border border-zen-accent/30">
                 <button onclick="switchTab('date')" id="tab-date" class="flex-1 py-3 text-sm font-serif font-bold rounded-md transition-all bg-zen-ink text-zen-bg shadow-md tracking-widest">
-                    今日運勢
+                    每日運勢
                 </button>
-                <button onclick="switchTab('number')" id="tab-number" class="flex-1 py-3 text-sm font-serif font-bold rounded-md transition-all text-zen-brown hover:text-zen-ink tracking-widest">
+                <button onclick="switchTab('random')" id="tab-random" class="flex-1 py-3 text-sm font-serif font-bold rounded-md transition-all text-zen-brown hover:text-zen-ink tracking-widest">
                     隨機卜卦
                 </button>
             </div>
 
-            <!-- Date Input Mode -->
+            <!-- Mode: Daily Fortune -->
             <div id="mode-date" class="block animate-fade-in">
                 <div class="text-center mb-8">
-                    <p class="text-zen-brown mb-5 text-xs tracking-[0.3em]">DAILY ENERGY</p>
+                    <p class="text-zen-brown mb-4 text-xs tracking-[0.3em] font-serif">DAILY ENERGY</p>
                     <div class="text-3xl font-serif text-zen-ink border-b border-zen-brown/30 pb-4 inline-block font-bold">
                         <span id="currentDateDisplay"></span>
                     </div>
 
-                    <!-- Personal Variable Input -->
-                    <div class="mt-8 px-6">
+                    <div class="text-left mt-6 mb-4 px-2">
+                         <p class="text-xs text-gray-500 leading-relaxed font-sans">
+                            此模式結合易經與日期靈數。輸入姓名可綁定個人專屬磁場，計算出您今日的流年運勢與五行能量分佈。
+                         </p>
+                    </div>
+
+                    <div class="mt-4 px-4">
                         <input type="text" id="dailyName" placeholder="請輸入姓名或暱稱" 
                             class="w-full bg-transparent border-b border-zen-brown/30 text-zen-ink text-center py-3 focus:outline-none focus:border-zen-milktea transition-all font-serif placeholder-gray-400 text-lg tracking-widest">
                         <p class="text-[10px] text-gray-400 mt-2 tracking-wider">輸入以綁定個人專屬磁場 (留空則隨機)</p>
                     </div>
-
-                    <p class="text-sm text-gray-500 mt-8 leading-loose font-serif">
-                        靜心 · 誠意 · 問天<br>
-                        <span class="text-zen-clay italic">「降叁指引，今日運勢為何？」</span>
-                    </p>
                 </div>
             </div>
 
-            <!-- Random/Prayer Input Mode -->
-            <div id="mode-number" class="hidden animate-fade-in">
-                <p class="text-center text-gray-500 mb-4 text-sm font-serif tracking-widest">請誠心默念以下祝禱文</p>
-                
-                <!-- Prayer Text Box -->
-                <div class="bg-white/60 p-5 rounded-xl border border-zen-border shadow-inner mb-8 text-left relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-8 h-8 bg-zen-milktea/10 rounded-bl-xl"></div>
+            <!-- Mode: Random Divination -->
+            <div id="mode-random" class="hidden animate-fade-in">
+                <div class="text-center mb-6">
+                    <p class="text-zen-brown mb-2 text-xs tracking-[0.3em] font-serif">DIVINE GUIDANCE</p>
+                    <p class="text-gray-500 text-sm font-serif tracking-widest mb-4">請誠心默念以下祝禱文</p>
                     
-                    <p class="text-zen-ink text-sm leading-relaxed font-serif text-justify mb-4">
-                        「拜請八卦祖師、伏羲、文王、周公、孔子五大聖賢、本地主司福德正神、排卦童子、成卦童郎，駕臨指示聖卦。」
-                    </p>
-                    <div class="h-[1px] w-full bg-zen-border mb-4"></div>
-                    <p class="text-zen-ink text-sm leading-relaxed font-serif text-justify">
-                        「今有弟子（或信女）<span class="text-zen-milktea font-bold border-b border-dotted border-zen-milktea">○○○</span>，住在<span class="text-zen-milktea font-bold border-b border-dotted border-zen-milktea">○○市○○區○○路○○巷○○弄○○號○○樓</span>，今日○○年○○月○○日○○時，今為<span class="text-zen-milktea font-bold border-b border-dotted border-zen-milktea">○○○○○○</span>之事，吉凶憂疑難決，請指點聖卦以決憂疑。」
-                    </p>
-                </div>
+                    <div class="text-left mb-4 px-2">
+                        <p class="text-xs text-gray-500 leading-relaxed font-sans">
+                           此模式模擬傳統擲筊與卜卦儀式。透過誠心祝禱連結宇宙場域，隨機抽取六十四卦中的一卦，解答您心中的疑惑。
+                        </p>
+                   </div>
 
-                <div class="text-center mb-4">
-                    <p class="text-xs text-zen-brown opacity-80 font-serif">默念完畢後，請點擊下方按鈕</p>
-                </div>
-            </div>
-
-            <!-- Action Button -->
-            <button onclick="startDivination()" class="w-full bg-zen-ink text-zen-bg font-serif font-bold py-5 rounded-xl shadow-lg transform transition-all hover:bg-black hover:scale-[1.01] active:scale-[0.99] group overflow-hidden relative">
-                <span class="relative z-10 tracking-[0.5em] text-lg">開 卦</span>
-                <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-            </button>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loadingState" class="hidden zen-panel rounded-xl p-8 text-center min-h-[500px] flex flex-col justify-center items-center">
-            <!-- Minimalist Loading -->
-            <div class="relative mb-12">
-                <div class="w-24 h-24 border border-zen-brown/20 rounded-full animate-spin-slow"></div>
-                <div class="absolute top-0 left-0 w-24 h-24 border-t-2 border-zen-ink rounded-full animate-spin"></div>
-                <div class="absolute inset-0 flex items-center justify-center font-calligraphy text-4xl text-zen-ink">
-                    易
-                </div>
-            </div>
-            
-            <p class="text-2xl font-serif text-zen-ink mb-4 tracking-widest">推 演 中</p>
-            <p class="text-xs text-zen-brown tracking-[0.2em] uppercase" id="loadingText">Connecting...</p>
-        </div>
-
-        <!-- Result Card -->
-        <div id="resultCard" class="hidden zen-panel rounded-xl overflow-hidden animate-fade-in shadow-xl bg-white/80">
-            <!-- Header Result -->
-            <div class="p-10 text-center relative overflow-hidden bg-gradient-to-b from-white to-zen-bg">
-                
-                <h2 class="text-zen-brown/70 text-[10px] font-bold tracking-[0.4em] uppercase mb-6">THE REVELATION</h2>
-                
-                <h3 id="hexagramTitle" class="text-5xl md:text-6xl font-serif font-bold text-zen-ink mb-8 leading-tight tracking-widest">乾為天</h3>
-                
-                <!-- Hexagram Visual -->
-                <div id="hexagramVisual" class="my-8 transform scale-100 origin-center animate-float opacity-80">
-                    <!-- Dynamic Lines -->
-                </div>
-
-                <div class="relative mt-8 px-2 pt-6">
-                    <p id="hexagramDesc" class="text-zen-ink text-lg font-serif font-medium leading-relaxed z-10 relative px-4 italic">
-                        "天行健，君子以自強不息。"
-                    </p>
-                </div>
-            </div>
-
-            <!-- Detailed Fortune -->
-            <div class="p-8 bg-white">
-                <div class="space-y-6">
-                    <!-- Cards Grid -->
-                    <div class="grid grid-cols-1 gap-5">
-                        
-                        <!-- Love -->
-                        <div class="border-l-2 border-red-800/30 pl-4 py-1 hover:bg-zen-bg/50 transition-colors">
-                            <div class="flex items-center text-zen-ink mb-2 font-serif font-bold tracking-widest text-sm">
-                                <span class="text-red-900 mr-2 text-xs">●</span> 愛情運勢
-                            </div>
-                            <p id="resLove" class="text-sm text-gray-600 leading-7 text-justify font-sans font-light">
-                                感情運勢分析載入中...
-                            </p>
-                        </div>
-
-                        <!-- Wealth -->
-                        <div class="border-l-2 border-yellow-700/30 pl-4 py-1 hover:bg-zen-bg/50 transition-colors">
-                            <div class="flex items-center text-zen-ink mb-2 font-serif font-bold tracking-widest text-sm">
-                                <span class="text-yellow-700 mr-2 text-xs">●</span> 財運解析
-                            </div>
-                            <p id="resWealth" class="text-sm text-gray-600 leading-7 text-justify font-sans font-light">
-                                財運趨勢分析載入中...
-                            </p>
-                        </div>
-
-                        <!-- Career -->
-                        <div class="border-l-2 border-blue-800/30 pl-4 py-1 hover:bg-zen-bg/50 transition-colors">
-                            <div class="flex items-center text-zen-ink mb-2 font-serif font-bold tracking-widest text-sm">
-                                <span class="text-blue-900 mr-2 text-xs">●</span> 事業前程
-                            </div>
-                            <p id="resCareer" class="text-sm text-gray-600 leading-7 text-justify font-sans font-light">
-                                事業運途分析載入中...
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Noble & Advice Combined -->
-                    <div class="mt-8 p-6 bg-zen-bg rounded border border-zen-border relative">
-                        <!-- Corner decorations -->
-                        <div class="absolute top-0 left-0 w-3 h-3 border-t border-l border-zen-brown"></div>
-                        <div class="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-zen-brown"></div>
-
-                        <div class="mb-4 flex items-center justify-between border-b border-zen-brown/20 pb-3">
-                            <h4 class="text-zen-brown font-bold tracking-wider text-xs font-serif">貴人方位</h4>
-                            <span id="resNoble" class="text-zen-bg text-xs font-bold bg-zen-brown px-3 py-1 rounded-full font-serif">南方</span>
-                        </div>
-                        <h4 class="text-zen-ink font-bold mb-3 text-sm tracking-wide font-serif">降叁 · 關鍵叮嚀</h4>
-                        <p id="resLuck" class="text-sm text-gray-600 leading-7 text-justify font-light">
-                            此卦顯示近期運勢波動...
+                    <!-- Prayer Text -->
+                    <div class="bg-white/60 p-5 rounded-xl border border-zen-accent/30 shadow-inner mb-4 text-left relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-8 h-8 bg-zen-milktea/10 rounded-bl-xl"></div>
+                        <p class="text-zen-ink text-sm leading-relaxed font-serif text-justify mb-4">
+                            「拜請八卦祖師、伏羲、文王、周公、孔子五大聖賢、本地主司福德正神、排卦童子、成卦童郎，駕臨指示聖卦。」
+                        </p>
+                        <div class="h-[1px] w-full bg-zen-accent/30 mb-4"></div>
+                        <p class="text-zen-ink text-sm leading-relaxed font-serif text-justify">
+                            「今有弟子（或信女）<span class="text-zen-milktea font-bold border-b border-dotted border-zen-milktea">○○○</span>，住在<span class="text-zen-milktea font-bold border-b border-dotted border-zen-milktea">○○市○○區○○路○○巷○○弄○○號○○樓</span>，今日○○年○○月○○日○○時，今為<span class="text-zen-milktea font-bold border-b border-dotted border-zen-milktea">○○○○○○</span>之事，吉凶憂疑難決，請指點聖卦以決憂疑。」
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- CTA Section -->
-            <div class="bg-[#F9F8F4] p-8 text-center border-t border-zen-border">
+            <!-- Start Button -->
+            <button onclick="startDivination()" class="w-full bg-zen-ink text-zen-bg font-serif font-bold py-5 rounded-xl shadow-lg transform transition-all hover:bg-black hover:scale-[1.01] active:scale-[0.99] group overflow-hidden relative mt-4">
+                <span class="relative z-10 tracking-[0.5em] text-lg">開 卦</span>
+                <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+            </button>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loadingState" class="hidden zen-panel rounded-2xl p-8 text-center min-h-[500px] flex flex-col justify-center items-center">
+            <div class="relative mb-12">
+                <div class="w-24 h-24 border border-zen-brown/20 rounded-full animate-spin" style="animation-duration: 3s;"></div>
+                <div class="absolute top-0 left-0 w-24 h-24 border-t-2 border-zen-ink rounded-full animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center font-calligraphy text-4xl text-zen-ink animate-pulse">易</div>
+            </div>
+            <p class="text-2xl font-serif text-zen-ink mb-4 tracking-widest">推 演 中</p>
+            <p class="text-xs text-zen-brown tracking-[0.2em] uppercase" id="loadingText">Connecting...</p>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultCard" class="hidden zen-panel rounded-2xl overflow-hidden animate-fade-in shadow-xl bg-white/90">
+            
+            <!-- Result Header -->
+            <div class="p-8 pb-4 text-center bg-gradient-to-b from-white to-zen-bg">
+                <h2 class="text-zen-brown/70 text-[10px] font-bold tracking-[0.4em] uppercase mb-4">THE REVELATION</h2>
+                <h3 id="hexagramTitle" class="text-5xl md:text-6xl font-serif font-bold text-zen-ink mb-6 leading-tight tracking-widest">乾為天</h3>
                 
-                <div class="mb-8">
-                    <p class="text-zen-ink font-serif font-bold text-lg mb-3">天機已現，如何化解？</p>
+                <!-- Hexagram Visual -->
+                <div id="hexagramVisual" class="my-6 transform scale-100 origin-center opacity-90 flex flex-col items-center justify-center">
+                    <!-- Lines injected by JS -->
                 </div>
                 
-                <div class="space-y-4">
-                    <!-- LINE CTA -->
-                    <a href="https://portaly.cc/bwa.bway2068" target="_blank" class="group block w-full bg-[#06C755] hover:bg-[#05b54d] text-white py-4 rounded-xl font-bold transition-all flex items-center justify-center shadow-lg hover:shadow-xl">
+                <p id="hexagramDesc" class="text-zen-ink text-lg font-serif font-medium leading-relaxed mt-6 px-4 italic">
+                    "天行健，君子以自強不息。"
+                </p>
+            </div>
+
+            <!-- Visualization Section: Chart.js Radar -->
+            <div class="px-6 py-2 bg-white">
+                <div class="text-center mb-2">
+                    <span class="text-xs text-zen-brown tracking-widest border-b border-zen-brown pb-1">五行能量分析</span>
+                </div>
+                <!-- Chart Container -->
+                <div class="chart-container">
+                    <canvas id="energyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Text Content Section -->
+            <div class="p-8 bg-white pt-2">
+                <div class="space-y-6">
+                    <!-- Analysis Cards -->
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="border-l-2 border-red-800/30 pl-4 py-1">
+                            <div class="text-zen-ink mb-1 font-serif font-bold tracking-widest text-sm"><span class="text-red-900 mr-2 text-xs">●</span> 愛情運勢</div>
+                            <p id="resLove" class="text-sm text-gray-600 leading-relaxed font-sans font-light">...</p>
+                        </div>
+                        <div class="border-l-2 border-yellow-700/30 pl-4 py-1">
+                            <div class="text-zen-ink mb-1 font-serif font-bold tracking-widest text-sm"><span class="text-yellow-700 mr-2 text-xs">●</span> 財運解析</div>
+                            <p id="resWealth" class="text-sm text-gray-600 leading-relaxed font-sans font-light">...</p>
+                        </div>
+                        <div class="border-l-2 border-blue-800/30 pl-4 py-1">
+                            <div class="text-zen-ink mb-1 font-serif font-bold tracking-widest text-sm"><span class="text-blue-900 mr-2 text-xs">●</span> 事業前程</div>
+                            <p id="resCareer" class="text-sm text-gray-600 leading-relaxed font-sans font-light">...</p>
+                        </div>
+                    </div>
+
+                    <!-- Key Advice -->
+                    <div class="mt-6 p-5 bg-zen-bg rounded border border-zen-accent/30 relative">
+                        <div class="flex items-center justify-between border-b border-zen-brown/20 pb-2 mb-3">
+                            <h4 class="text-zen-brown font-bold tracking-wider text-xs font-serif">貴人方位</h4>
+                            <span id="resNoble" class="text-zen-bg text-xs font-bold bg-zen-brown px-3 py-1 rounded-full font-serif">南方</span>
+                        </div>
+                        <h4 class="text-zen-ink font-bold mb-2 text-sm tracking-wide font-serif">降叁 · 關鍵叮嚀</h4>
+                        <p id="resLuck" class="text-sm text-gray-600 leading-relaxed text-justify font-light">...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Footer (Social Funnel) -->
+            <div class="bg-[#F9F8F4] p-8 text-center border-t border-zen-accent/30">
+                <div class="mb-6">
+                    <p class="text-zen-ink font-serif font-bold text-lg mb-2">天機已現，如何化解？</p>
+                    <p class="text-xs text-gray-500 font-sans tracking-wide">
+                        <span class="text-zen-brown">加入社群</span> 獲取更多流年資訊
+                    </p>
+                </div>
+                
+                <div class="space-y-3">
+                    <!-- Portaly (Line replacement as requested) -->
+                    <a href="https://portaly.cc/bwa.bway2068" target="_blank" class="block w-full bg-[#06C755] hover:bg-[#05b54d] text-white py-4 rounded-xl font-bold transition-all flex items-center justify-center shadow-lg">
                         <i class="fab fa-line text-2xl mr-3"></i> 
                         <span class="tracking-widest font-serif">加 LINE 領取開運祕法</span>
                     </a>
                     
                     <div class="flex space-x-3">
-                        <!-- IG CTA -->
-                        <a href="https://www.instagram.com/bwa.bway2068/" target="_blank" class="flex-1 bg-white border border-zen-border text-zen-ink py-3.5 rounded-xl font-bold transition-all flex items-center justify-center hover:bg-gray-50 shadow-sm font-serif">
+                        <a href="https://www.instagram.com/bwa.bway2068/" target="_blank" class="flex-1 bg-white border border-zen-accent/50 text-zen-ink py-3.5 rounded-xl font-bold transition-all flex items-center justify-center hover:bg-gray-50 shadow-sm font-serif">
                             <i class="fab fa-instagram text-xl mr-2 text-zen-brown"></i> 追蹤 IG
                         </a>
-                        <!-- TikTok CTA -->
                         <a href="https://www.tiktok.com/@bwa_bway2068" target="_blank" class="flex-1 bg-zen-ink border border-zen-ink text-white py-3.5 rounded-xl font-bold transition-all flex items-center justify-center hover:bg-black shadow-sm font-serif">
                             <i class="fab fa-tiktok text-xl mr-2"></i> 關注 TikTok
                         </a>
@@ -358,124 +339,131 @@
                 </div>
             </div>
 
-            <!-- Restart Button -->
-            <div class="p-6 text-center bg-white">
-                <button onclick="resetApp()" class="text-gray-400 text-xs hover:text-zen-brown transition-colors flex items-center justify-center mx-auto tracking-[0.2em]">
+            <!-- Restart -->
+            <div class="p-4 text-center bg-white">
+                <button onclick="resetApp()" class="text-gray-400 text-xs hover:text-zen-brown transition-colors tracking-[0.2em]">
                     重新占卜
                 </button>
             </div>
         </div>
-
     </main>
 
     <footer class="mt-8 text-center text-[10px] text-zen-brown/50 relative z-10 font-serif tracking-[0.2em] uppercase">
-        <p>&copy; 2024 JIANG SAN. All Rights Reserved.</p>
+        <p>&copy; 2026 Jiang San Divination. All Rights Reserved.</p>
     </footer>
 
+    <!-- Logic Section -->
     <script>
-        // --- 1. Data Structure ---
+        // --- State Management ---
+        let currentMode = 'date';
+        let chartInstance = null; // For Chart.js instance
+
+        // --- Data: Trigrams (Based on Lines: [Bottom, Middle, Top]) ---
+        // 1=Yang, 0=Yin
         const trigrams = {
-            1: { name: '乾', lines: [1,1,1] }, 2: { name: '兌', lines: [0,1,1] },
-            3: { name: '離', lines: [1,0,1] }, 4: { name: '震', lines: [0,0,1] },
-            5: { name: '巽', lines: [1,1,0] }, 6: { name: '坎', lines: [0,1,0] },
-            7: { name: '艮', lines: [1,0,0] }, 8: { name: '坤', lines: [0,0,0] }
+            1: { name: '乾', lines: [1,1,1] }, // Heaven
+            2: { name: '兌', lines: [1,1,0] }, // Lake (Top broken)
+            3: { name: '離', lines: [1,0,1] }, // Fire
+            4: { name: '震', lines: [1,0,0] }, // Thunder (Bottom solid)
+            5: { name: '巽', lines: [0,1,1] }, // Wind (Bottom broken)
+            6: { name: '坎', lines: [0,1,0] }, // Water
+            7: { name: '艮', lines: [0,0,1] }, // Mountain (Top solid)
+            8: { name: '坤', lines: [0,0,0] }  // Earth
         };
 
+        // --- Data: Hexagrams (Mapped EXACTLY from provided image) ---
+        // Format: "Upper,Lower"
         const hexagramNames = {
-            "1,1": "乾為天", "8,8": "坤為地", "6,4": "水雷屯", "7,6": "山水蒙",
-            "6,1": "水天需", "1,6": "天水訟", "8,6": "地水師", "6,8": "水地比",
-            "5,1": "風天小畜", "1,2": "天澤履", "8,1": "地天泰", "1,8": "天地否",
-            "1,3": "天火同人", "3,1": "火天大有", "8,7": "地山謙", "4,8": "雷地豫",
-            "2,4": "澤雷隨", "7,5": "山風蠱", "8,2": "地澤臨", "5,8": "風地觀",
-            "3,4": "火雷噬嗑", "7,3": "山火賁", "7,8": "山地剝", "8,4": "地雷復",
-            "1,4": "天雷無妄", "7,1": "山天大畜", "7,4": "山雷頤", "2,5": "澤風大過",
-            "6,6": "坎為水", "3,3": "離為火", "2,7": "澤山咸", "4,5": "雷風恆",
-            "1,7": "天山遯", "4,1": "雷天大壯", "3,8": "火地晉", "8,3": "地火明夷",
-            "5,3": "風火家人", "3,2": "火澤睽", "6,7": "水山蹇", "4,6": "雷水解",
-            "7,2": "山澤損", "5,4": "風雷益", "2,1": "澤天夬", "1,5": "天風姤",
-            "2,8": "澤地萃", "8,5": "地風升", "2,6": "澤水困", "6,5": "水風井",
-            "2,3": "澤火革", "3,5": "火風鼎", "4,4": "震為雷", "7,7": "艮為山",
-            "5,7": "風山漸", "4,2": "雷澤歸妹", "4,3": "雷火豐", "3,7": "火山旅",
-            "5,5": "巽為風", "2,2": "兌為澤", "5,6": "風水渙", "6,2": "水澤節",
-            "5,2": "風澤中孚", "4,7": "雷山小過", "6,3": "水火既濟", "3,6": "火水未濟"
+            // Col 8 (Lower 坤 Earth)
+            "8,8": "坤為地", "8,7": "地山謙", "8,6": "地水師", "8,5": "地風升",
+            "8,4": "地雷復", "8,3": "地火明夷", "8,2": "地澤臨", "8,1": "地天泰",
+            
+            // Col 7 (Lower 艮 Mountain)
+            "7,8": "山地剝", "7,7": "艮為山", "7,6": "山水蒙", "7,5": "山風蠱",
+            "7,4": "山雷頤", "7,3": "山火賁", "7,2": "山澤損", "7,1": "山天大畜",
+            
+            // Col 6 (Lower 坎 Water)
+            "6,8": "水地比", "6,7": "水山蹇", "6,6": "坎為水", "6,5": "水風井",
+            "6,4": "水雷屯", "6,3": "水火既濟", "6,2": "水澤節", "6,1": "水天需",
+            
+            // Col 5 (Lower 巽 Wind)
+            "5,8": "風地觀", "5,7": "風山漸", "5,6": "風水渙", "5,5": "巽為風",
+            "5,4": "風雷益", "5,3": "風火家人", "5,2": "風澤中孚", "5,1": "風天小畜",
+            
+            // Col 4 (Lower 震 Thunder)
+            "4,8": "雷地豫", "4,7": "雷山小過", "4,6": "雷水解", "4,5": "雷風恆",
+            "4,4": "震為雷", "4,3": "雷火豐", "4,2": "雷澤歸妹", "4,1": "雷天大壯",
+            
+            // Col 3 (Lower 離 Fire)
+            "3,8": "火地晉", "3,7": "火山旅", "3,6": "火水未濟", "3,5": "火風鼎",
+            "3,4": "火雷噬嗑", "3,3": "離為火", "3,2": "火澤睽", "3,1": "火天大有",
+            
+            // Col 2 (Lower 兌 Lake)
+            "2,8": "澤地萃", "2,7": "澤山咸", "2,6": "澤水困", "2,5": "澤風大過",
+            "2,4": "澤雷隨", "2,3": "澤火革", "2,2": "兌為澤", "2,1": "澤天夬",
+            
+            // Col 1 (Lower 乾 Heaven)
+            "1,8": "天地否", "1,7": "天山遯", "1,6": "天水訟", "1,5": "天風姤",
+            "1,4": "天雷無妄", "1,3": "天火同人", "1,2": "天澤履", "1,1": "乾為天"
         };
 
-        // Expanded Fortune Bank (Longer descriptions)
         const fortuneBank = {
             good: {
-                desc: [
-                    "如日中天之象，萬物生輝。此卦象徵著強大的生命力與創造力，過去的努力即將開花結果。",
-                    "枯木逢春，生機勃勃。眼前的陰霾即將散去，取而代之的是充滿希望的嶄新局面，請保持信心。",
-                    "得道多助，氣勢如虹。您當前的能量場極強，容易吸引同頻率的貴人靠近，適合推動重大計畫。"
-                ],
-                love: "感情運勢正處於上升期，雙方默契極佳。若有心儀對象，此刻正是展現真誠、大膽表白的最佳時機；有伴侶者則感情將更加深厚，適合規劃長遠未來，甚至論及婚嫁。",
-                wealth: "財星高照，正財運勢旺盛，過去的投資或努力開始獲得回報。若有新的理財計畫或合作邀約，經審慎評估後可大膽嘗試，獲利機會頗高，但仍需切記財不露白。",
-                career: "事業發展順遂，工作能力備受上司與同事肯定，升遷或加薪的機會就在眼前。此刻適合主動爭取帶領專案，展現領導才華，您的決策將成為團隊成功的關鍵。",
-                noble: "貴人多出現在東方或南方，多留意身邊屬龍、馬、或長輩級的人物，他們的一句話可能點醒夢中人。",
-                advice: "吉星高照，把握當下機會全力衝刺，切勿猶豫。成功往往屬於敢於行動的人，保持謙遜但堅定的態度，好運將持續相隨。"
+                desc: ["如日中天之象，萬物生輝。此卦象徵著強大的生命力與創造力。", "枯木逢春，生機勃勃。眼前的陰霾即將散去。", "得道多助，氣勢如虹。當前能量場極強，適合推動重大計畫。"],
+                love: "感情運勢正處於上升期，雙方默契極佳。若有心儀對象，此刻正是展現真誠的最佳時機。",
+                wealth: "財星高照，正財運勢旺盛。過去的努力開始獲得回報，但切記財不露白。",
+                career: "事業發展順遂，能力備受肯定。此刻適合主動爭取，您的決策將成為關鍵。",
+                noble: "貴人多出現在東方或南方，留意屬龍、馬、或長輩級人物。",
+                advice: "吉星高照，把握當下機會全力衝刺，切勿猶豫。",
+                stats: [90, 85, 95, 80, 88]
             },
             neutral: {
-                desc: [
-                    "局勢曖昧不明，宜靜不宜動。目前的狀況如同行走在迷霧中，雖無大礙，但若貿然行動容易迷失方向。",
-                    "平平淡淡才是真，蓄勢待發。這是一個累積實力的過渡期，雖然沒有驚人的進展，但也沒有巨大的風險。",
-                    "守成不易，需更有耐心。外在環境變動較快，建議先穩住現有的基礎，不要急著擴張或改變現狀。"
-                ],
-                love: "感情進入平穩期或稍微停滯，雙方可能因生活瑣事而感到些許乏味，或產生溝通上的小誤會。建議多安排深度對話或共同出遊，重拾熱情，避免因冷落而生變。",
-                wealth: "目前財運平穩，雖無橫財爆發之象，但正財收入穩定。建議採取保守理財策略，避免高風險的投機行為，記帳與節流是現階段最重要的課題，累積實力等待下一次轉折。",
-                career: "職場上建議安分守己，做好本份工作，暫時不宜強出頭或隨意轉換跑道。利用這段時間進修專業技能，或改善人際關係，將成為未來突破瓶頸的重要基石。",
-                noble: "平輩朋友或同事即是您最大的貴人，多參與社交聚會，透過輕鬆的交流可能獲得意想不到的資訊。",
-                advice: "目前局勢不明朗，建議以靜制動。與其向外尋求突破，不如向內觀照，提升自我內涵。耐心等待時機，機會總是留給準備好的人。"
+                desc: ["局勢曖昧不明，宜靜不宜動。如行走迷霧中，貿然行動易迷失。", "平平淡淡才是真，蓄勢待發。累積實力的過渡期。", "守成不易，需更有耐心。外在變動快，先穩住基礎。"],
+                love: "感情進入平穩期或稍微停滯。建議多安排深度對話，避免因冷落而生變。",
+                wealth: "財運平穩，無橫財爆發之象。建議採取保守理財策略，記帳與節流是重點。",
+                career: "建議安分守己，做好本份。利用時間進修專業技能，是未來突破的基石。",
+                noble: "平輩朋友即是貴人，多參與社交聚會。",
+                advice: "目前局勢不明朗，建議以靜制動。向內觀照，提升自我內涵。",
+                stats: [60, 55, 65, 70, 75]
             },
             bad: {
-                desc: [
-                    "陰雲密佈，慎防小人。當前運勢較為低迷，容易遇到阻礙或被人誤解，需提高警覺。",
-                    "波折重重，考驗心志。這是一個充滿挑戰的時期，看似困難重重，實則是磨練心性的好機會。",
-                    "前路艱險，步步為營。行事切勿衝動，任何決定都需三思而後行，保留實力是為了走更長遠的路。"
-                ],
-                love: "感情路上波折較多，容易因情緒波動而與對方發生爭執，或陷入單方面的苦戀。建議暫時拉開距離，給彼此冷靜的空間，切勿意氣用事說出傷人的話。",
-                wealth: "財運欠佳，恐有意外破財之虞。近期應看緊荷包，避免借貸給他人或進行不熟悉的投資。若有大筆支出計畫，建議暫緩執行，以免造成資金周轉困難。",
-                career: "工作壓力較大，需防範背後冷箭或被捲入派系鬥爭。建議低調行事，少說多做，將所有溝通留存紀錄以自保。這段時間雖苦，卻是看清人情冷暖的時刻。",
-                noble: "此時貴人難顯，需靠長輩或導師指點迷津。若遇困難，不妨向經驗豐富的前輩請益，切勿閉門造車。",
-                advice: "運勢低迷時更應修身養性，建議低調行事，多行善積德。可佩戴水晶或至廟宇祈福轉運。記住，黎明前總是最黑暗，撐過這段時期，必有後福。"
+                desc: ["陰雲密佈，慎防小人。運勢低迷，易遇阻礙。", "波折重重，考驗心志。看似困難，實則磨練。", "前路艱險，步步為營。行事切勿衝動，保留實力。"],
+                love: "波折較多，易有情緒波動。建議暫時拉開距離，給彼此空間。",
+                wealth: "財運欠佳，恐有意外破財。看緊荷包，避免借貸或不熟悉投資。",
+                career: "壓力較大，防背後冷箭。低調行事，溝通留存紀錄以自保。",
+                noble: "貴人難顯，需靠長輩指點。切勿閉門造車。",
+                advice: "運勢低迷時應修身養性，低調行事。黎明前總是最黑暗。",
+                stats: [40, 35, 45, 50, 60]
             }
         };
 
-        // UI Logic
-        let currentMode = 'date';
+        // --- UI Initialization ---
         const dateDisplay = document.getElementById('currentDateDisplay');
         const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        dateDisplay.innerText = `${yyyy} . ${mm} . ${dd}`;
+        dateDisplay.innerText = `${today.getFullYear()} . ${String(today.getMonth() + 1).padStart(2, '0')} . ${String(today.getDate()).padStart(2, '0')}`;
 
+        // --- Interaction Handlers ---
         function switchTab(mode) {
             currentMode = mode;
             const tabDate = document.getElementById('tab-date');
-            const tabNumber = document.getElementById('tab-number');
+            const tabRandom = document.getElementById('tab-random');
             const viewDate = document.getElementById('mode-date');
-            const viewNumber = document.getElementById('mode-number');
+            const viewRandom = document.getElementById('mode-random');
 
             if (mode === 'date') {
-                tabDate.classList.replace('bg-white/50', 'bg-zen-ink');
-                tabDate.classList.replace('text-zen-brown', 'text-zen-bg');
-                tabDate.classList.add('shadow-md');
-                
-                tabNumber.classList.remove('bg-zen-ink', 'text-zen-bg', 'shadow-md');
-                tabNumber.classList.add('text-zen-brown', 'hover:text-zen-ink');
-
+                updateTabStyle(tabDate, tabRandom);
                 viewDate.classList.remove('hidden');
-                viewNumber.classList.add('hidden');
+                viewRandom.classList.add('hidden');
             } else {
-                tabNumber.classList.add('bg-zen-ink', 'text-zen-bg', 'shadow-md');
-                tabNumber.classList.remove('text-zen-brown', 'hover:text-zen-ink');
-
-                tabDate.classList.remove('bg-zen-ink', 'text-zen-bg', 'shadow-md');
-                tabDate.classList.add('text-zen-brown', 'hover:text-zen-ink');
-
+                updateTabStyle(tabRandom, tabDate);
                 viewDate.classList.add('hidden');
-                viewNumber.classList.remove('hidden');
+                viewRandom.classList.remove('hidden');
             }
+        }
+
+        function updateTabStyle(active, inactive) {
+            active.className = "flex-1 py-3 text-sm font-serif font-bold rounded-md transition-all bg-zen-ink text-zen-bg shadow-md tracking-widest";
+            inactive.className = "flex-1 py-3 text-sm font-serif font-bold rounded-md transition-all text-zen-brown hover:text-zen-ink tracking-widest";
         }
 
         function getNature(upper, lower) {
@@ -491,50 +479,36 @@
             let upper, lower;
 
             if (currentMode === 'date') {
-                const y = today.getFullYear();
-                const m = today.getMonth() + 1;
-                const d = today.getDate();
-                
-                // Get Name Input
                 const nameStr = document.getElementById('dailyName').value || '';
-                
-                // Calculate Variable based on Name
                 let personalVar = 0;
                 if(nameStr) {
                     for(let i=0; i<nameStr.length; i++) {
                         personalVar += nameStr.charCodeAt(i);
                     }
                 } else {
-                    // If no name, use a random variable to ensure variety
                     personalVar = Math.floor(Math.random() * 9999);
                 }
-
-                let sum1 = y + m + d + personalVar;
-                let sum2 = y + d + Math.floor(personalVar/2) + m; 
-
-                upper = sum1 % 8;
-                lower = sum2 % 8;
+                let sum1 = today.getFullYear() + (today.getMonth()+1) + today.getDate() + personalVar;
+                let sum2 = today.getFullYear() + today.getDate() + Math.floor(personalVar/2) + (today.getMonth()+1); 
+                upper = sum1 % 8 || 8;
+                lower = sum2 % 8 || 8;
             } else {
-                // Random Divination Logic (Replaces manual input)
-                // Generate random numbers between 1-8 directly for trigrams
                 upper = Math.floor(Math.random() * 8) + 1;
                 lower = Math.floor(Math.random() * 8) + 1;
             }
 
-            if (upper === 0) upper = 8;
-            if (lower === 0) lower = 8;
-
+            // UI Transitions
             document.getElementById('inputCard').classList.add('hidden');
             document.getElementById('loadingState').classList.remove('hidden');
 
-            const loadingTexts = ["Linking to the Void...", "解析卦象...", "顯化天機..."];
+            const loadingTexts = ["連結宇宙能量...", "解析卦象奧義...", "顯化天機...", "繪製能量圖譜..."];
             let step = 0;
             const interval = setInterval(() => {
                 if(step < loadingTexts.length) {
                     document.getElementById('loadingText').innerText = loadingTexts[step];
                     step++;
                 }
-            }, 1000);
+            }, 800);
 
             setTimeout(() => {
                 clearInterval(interval);
@@ -542,7 +516,7 @@
                 document.getElementById('loadingState').classList.add('hidden');
                 document.getElementById('resultCard').classList.remove('hidden');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 3000);
+            }, 3200);
         }
 
         function renderResult(upper, lower) {
@@ -551,35 +525,102 @@
             const natureKey = getNature(upper, lower);
             const fortune = fortuneBank[natureKey];
 
+            // Text Content
             document.getElementById('hexagramTitle').innerText = name;
-            
-            const randomDesc = fortune.desc[Math.floor(Math.random() * fortune.desc.length)];
-            document.getElementById('hexagramDesc').innerText = `"${randomDesc}"`;
-
+            document.getElementById('hexagramDesc').innerText = `"${fortune.desc[Math.floor(Math.random() * fortune.desc.length)]}"`;
             document.getElementById('resLove').innerText = fortune.love;
             document.getElementById('resWealth').innerText = fortune.wealth;
             document.getElementById('resCareer').innerText = fortune.career;
             document.getElementById('resNoble').innerText = fortune.noble;
             document.getElementById('resLuck').innerText = fortune.advice;
 
+            // Visual Hexagram Render
+            // Array indices: [0=Bottom, 1=Middle, 2=Top]
+            // Rendering Stack (Visual): Top -> Middle -> Bottom
             const upLines = trigrams[upper].lines; 
+            const lowLines = trigrams[lower].lines;
             let html = '';
-            for(let i=2; i>=0; i--) {
-                const isYang = upLines[i] === 1;
-                html += `<div class="hex-line ${isYang ? '' : 'yin'}"></div>`;
-            }
-            html += `<div class="h-2"></div>`; // Small gap between trigrams
-            for(let i=2; i>=0; i--) {
-                const isYang = lowerLines = trigrams[lower].lines[i] === 1;
-                html += `<div class="hex-line ${isYang ? '' : 'yin'}"></div>`;
-            }
+            
+            // Render Upper Trigram (Top line first)
+            for(let i=2; i>=0; i--) html += `<div class="hex-line ${upLines[i] ? '' : 'yin'}"></div>`;
+            
+            // Spacer
+            html += `<div class="h-2"></div>`;
+            
+            // Render Lower Trigram (Top line first)
+            for(let i=2; i>=0; i--) html += `<div class="hex-line ${lowLines[i] ? '' : 'yin'}"></div>`;
+            
             document.getElementById('hexagramVisual').innerHTML = html;
+
+            // Chart.js Visualization
+            renderChart(fortune.stats);
+        }
+
+        function renderChart(baseStats) {
+            // Add some randomness
+            const data = baseStats.map(v => v + Math.floor(Math.random() * 10 - 5));
+            
+            const ctx = document.getElementById('energyChart').getContext('2d');
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['愛情', '財運', '事業', '貴人', '健康'],
+                    datasets: [{
+                        label: '五行能量指數',
+                        data: data,
+                        fill: true,
+                        backgroundColor: 'rgba(158, 129, 102, 0.2)',
+                        borderColor: 'rgba(158, 129, 102, 1)',
+                        pointBackgroundColor: '#2C2C2C',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#2C2C2C'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    elements: {
+                        line: { borderWidth: 2 }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            pointLabels: {
+                                font: {
+                                    family: "'Noto Serif TC', serif",
+                                    size: 12
+                                },
+                                color: '#8D7B68'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(44, 44, 44, 0.9)',
+                            titleFont: { family: "'Noto Serif TC', serif" },
+                            bodyFont: { family: "'Noto Sans TC', sans-serif" }
+                        }
+                    }
+                }
+            });
         }
 
         function resetApp() {
             document.getElementById('resultCard').classList.add('hidden');
             document.getElementById('inputCard').classList.remove('hidden');
-            // No inputs to clear anymore for number mode
+            document.getElementById('dailyName').value = '';
+            if (chartInstance) chartInstance.destroy();
         }
     </script>
 </body>
