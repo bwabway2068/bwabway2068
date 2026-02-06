@@ -196,7 +196,7 @@
 
                     <div class="text-left mt-6 mb-4 px-2">
                          <p class="text-xs text-gray-500 leading-relaxed font-sans">
-                            此模式結合易經與日期靈數。輸入姓名可綁定個人專屬磁場，計算出您今日的流年運勢與五行能量分佈。
+                            此模式結合易經與日期靈數。輸入姓名可綁定個人專屬磁場，計算出您今日的流年運勢與五行能量分佈，請在內心誠心思考問題後開卦。
                          </p>
                     </div>
 
@@ -306,7 +306,7 @@
                         </div>
                     </div>
 
-                    <!-- Key Advice & Noble & Deity -->
+                    <!-- Key Advice & Noble & Deity & Ritual -->
                     <div class="mt-6 p-5 bg-zen-bg rounded border border-zen-accent/30 relative">
                         <div class="flex flex-col border-b border-zen-brown/20 pb-3 mb-3">
                             <h4 class="text-zen-brown font-bold tracking-wider text-xs font-serif mb-2">貴人與方位</h4>
@@ -317,6 +317,14 @@
                         <div class="flex flex-col border-b border-zen-brown/20 pb-3 mb-3">
                             <h4 class="text-zen-brown font-bold tracking-wider text-xs font-serif mb-2">本日適合拜的神尊</h4>
                             <span id="resDeity" class="text-zen-ink text-sm font-sans font-medium leading-relaxed text-[#B8860B]">...</span>
+                        </div>
+
+                        <!-- Ritual Section (New) -->
+                        <div class="flex flex-col border-b border-zen-brown/20 pb-3 mb-3">
+                            <h4 class="text-zen-brown font-bold tracking-wider text-xs font-serif mb-2">建議搭配科儀</h4>
+                            <div id="resRitual" class="text-zen-ink text-sm font-sans leading-relaxed">
+                                <!-- JS Injected -->
+                            </div>
                         </div>
 
                         <h4 class="text-zen-ink font-bold mb-2 text-sm tracking-wide font-serif">降叁 · 關鍵叮嚀</h4>
@@ -338,7 +346,7 @@
                     <!-- Portaly (Line replacement as requested) -->
                     <a href="https://portaly.cc/bwa.bway2068" target="_blank" class="block w-full bg-[#06C755] hover:bg-[#05b54d] text-white py-4 rounded-xl font-bold transition-all flex items-center justify-center shadow-lg">
                         <i class="fab fa-line text-2xl mr-3"></i> 
-                        <span class="tracking-widest font-serif">加 LINE 領取開運祕法</span>
+                        <span class="tracking-widest font-serif">加 LINE 領取轉運符及最新科儀</span>
                     </a>
                     
                     <div class="flex space-x-3">
@@ -574,7 +582,7 @@
             
             // Set Badge Color based on Level
             const badge = document.getElementById('hexagramLevel');
-            if (data.level === '大吉' || data.level === '吉') {
+            if (data.level === '大吉' || data.level === '吉' || data.level === '中吉') {
                 badge.className = "bg-[#06C755] text-white text-xs font-serif font-bold px-3 py-1 rounded-full border border-white/20 shadow-sm"; // Green
             } else if (data.level === '凶' || data.level === '大凶') {
                 badge.className = "bg-[#D93025] text-white text-xs font-serif font-bold px-3 py-1 rounded-full border border-white/20 shadow-sm"; // Red
@@ -593,6 +601,27 @@
             // Use (upper * 8 + lower) % godList.length
             const godIndex = (upper * 8 + lower) % godList.length;
             document.getElementById('resDeity').innerText = godList[godIndex];
+
+            // Ritual Recommendation Logic
+            let ritualHTML = "";
+            if (data.level.includes("吉")) {
+                ritualHTML = `
+                    <div class="mb-2"><span class="font-bold text-[#06C755]">【財庫豐盈】</span> 土地公與武財神補財庫</div>
+                    <p class="text-xs text-gray-500 mb-2">簡介：趁運勢正旺，祈請正神加持先天與後天財庫，修補漏財缺口，確保財源廣進且能守成，延續富貴氣場。</p>
+                `;
+            } else if (data.level === "大凶") {
+                ritualHTML = `
+                    <div class="mb-2"><span class="font-bold text-[#D93025]">【天界赦罪】</span> 玉皇赦罪 及 紫微赦罪科儀</div>
+                    <p class="text-xs text-gray-500 mb-2">簡介：針對運勢極度低迷或卡關者，向萬天之主玉皇上帝與萬星之主紫微大帝祈求開恩赦免，懺悔過往業障，以此換取重生與轉運的契機。</p>
+                `;
+            } else { // 凶 or 平
+                ritualHTML = `
+                    <div class="mb-2"><span class="font-bold text-zen-brown">【補運解業】</span> 雙神補運 或 太乙解業</div>
+                    <p class="text-xs text-gray-500 mb-1">1. <strong>土地公與武財神補運</strong>：祈求地方守護神修補流年運勢破洞，轉虧為盈，消災解厄。</p>
+                    <p class="text-xs text-gray-500 mb-2">2. <strong>太乙解業科儀</strong>：仰仗太乙救苦天尊願力，化解累世冤親債主與深層業障，淨化身心磁場，讓運途重見光明。</p>
+                `;
+            }
+            document.getElementById('resRitual').innerHTML = ritualHTML;
 
             // Visual Hexagram Render
             const upLines = trigrams[upper].lines; 
