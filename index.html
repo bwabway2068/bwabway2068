@@ -370,7 +370,7 @@
     </main>
 
     <footer class="mt-8 text-center text-[10px] text-zen-brown/50 relative z-10 font-serif tracking-[0.2em] uppercase">
-        <p>&copy; 2026 Jiang San Divination. All Rights Reserved.</p>
+        <p>&copy; 2026 Xiang San Divination. All Rights Reserved.</p>
     </footer>
 
     <!-- Logic Section -->
@@ -510,7 +510,7 @@
         function getDailyHexagram(name, dateObj) {
             // Seed String: Name + YYYYMMDD + Salt
             const dateStr = `${dateObj.getFullYear()}${dateObj.getMonth() + 1}${dateObj.getDate()}`;
-            const seedStr = (name || "Anonymous") + dateStr + "JiangSanOracleSalt2026";
+            const seedStr = (name || "Anonymous") + dateStr + "XiangSanOracleSalt2026";
             
             // Simple robust hash (djb2 variant)
             let hash = 5381;
@@ -712,4 +712,5 @@
     </script>
 </body>
 </html>
+
 
